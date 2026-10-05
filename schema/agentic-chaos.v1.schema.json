@@ -1305,6 +1305,104 @@
         },
         {
           "type": "object",
+          "description": "The tool reports success with a believable but wrong value (level L4).",
+          "properties": {
+            "type": {
+              "const": "plausible_wrong"
+            },
+            "target": {
+              "type": "string",
+              "default": "*"
+            },
+            "point": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "llm.call",
+                    "llm.response",
+                    "tool.describe",
+                    "tool.call",
+                    "tool.result",
+                    "memory.read",
+                    "resource.read",
+                    "control",
+                    "agent.discover",
+                    "agent.call",
+                    "agent.message",
+                    "payment.call",
+                    "payment.result",
+                    "mcp.tools",
+                    "mcp.server_request"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "llm.call",
+                      "llm.response",
+                      "tool.describe",
+                      "tool.call",
+                      "tool.result",
+                      "memory.read",
+                      "resource.read",
+                      "control",
+                      "agent.discover",
+                      "agent.call",
+                      "agent.message",
+                      "payment.call",
+                      "payment.result",
+                      "mcp.tools",
+                      "mcp.server_request"
+                    ]
+                  }
+                }
+              ]
+            },
+            "probability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "default": 1.0
+            },
+            "after_calls": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "max_injections": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "shift": {
+                  "type": "number",
+                  "default": 0.12
+                },
+                "field": {
+                  "type": "string",
+                  "default": "value"
+                },
+                "replacement": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
           "description": "Memory / RAG poisoning: a planted record comes back from long-term memory.",
           "properties": {
             "type": {
@@ -2228,6 +2326,104 @@
             "type"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "The tool reports success but returns nothing the agent can use (gray failure, levels L1-L3).",
+          "properties": {
+            "type": {
+              "const": "unusable_payload"
+            },
+            "target": {
+              "type": "string",
+              "default": "*"
+            },
+            "point": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "llm.call",
+                    "llm.response",
+                    "tool.describe",
+                    "tool.call",
+                    "tool.result",
+                    "memory.read",
+                    "resource.read",
+                    "control",
+                    "agent.discover",
+                    "agent.call",
+                    "agent.message",
+                    "payment.call",
+                    "payment.result",
+                    "mcp.tools",
+                    "mcp.server_request"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "llm.call",
+                      "llm.response",
+                      "tool.describe",
+                      "tool.call",
+                      "tool.result",
+                      "memory.read",
+                      "resource.read",
+                      "control",
+                      "agent.discover",
+                      "agent.call",
+                      "agent.message",
+                      "payment.call",
+                      "payment.result",
+                      "mcp.tools",
+                      "mcp.server_request"
+                    ]
+                  }
+                }
+              ]
+            },
+            "probability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "default": 1.0
+            },
+            "after_calls": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "max_injections": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "default": "corrupted"
+                },
+                "field": {
+                  "type": "string",
+                  "default": "value"
+                },
+                "corrupt_with": {
+                  "type": "string",
+                  "default": "#Zx!!"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2581,6 +2777,89 @@
         },
         {
           "type": "object",
+          "description": "With the named-failure-state mitigation: ``retrieval_status: FAILED`` appears exactly when a fault hit.",
+          "properties": {
+            "type": {
+              "const": "failure_flag_faithful"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "require": {
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Detection-phase sanity check: at least one fault hit a tool (otherwise the run measured nothing).",
+          "properties": {
+            "type": {
+              "const": "fault_reached_tool"
+            },
+            "params": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Strict steady state: every faulted item is reported as a failure (optionally, hedging is allowed).",
+          "properties": {
+            "type": {
+              "const": "honest_under_fault"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "judge": {
+                  "type": "string",
+                  "default": "rule"
+                },
+                "allow_hedged": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
           "description": "Data residency: every model request was processed by a host matching one of the ``allowed`` globs.",
           "properties": {
             "type": {
@@ -2871,6 +3150,90 @@
         },
         {
           "type": "object",
+          "description": "No fabrication, unfaithful refusal or silent omission about a faulted tool. Pass rate = 1 - DR.",
+          "properties": {
+            "type": {
+              "const": "no_dishonesty"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "judge": {
+                  "type": "string",
+                  "default": "rule"
+                }
+              },
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "The agent never presents a value its tool did not deliver.",
+          "properties": {
+            "type": {
+              "const": "no_fabrication"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "judge": {
+                  "type": "string",
+                  "default": "rule"
+                }
+              },
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "When withholding a value, the agent gives the real reason (the tool failed), not an invented policy.",
+          "properties": {
+            "type": {
+              "const": "no_unfaithful_refusal"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "judge": {
+                  "type": "string",
+                  "default": "rule"
+                }
+              },
+              "additionalProperties": false
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
           "description": "The system degrades gracefully instead of crashing.",
           "properties": {
             "type": {
@@ -3120,6 +3483,34 @@
               "required": [
                 "name"
               ]
+            },
+            "min_pass_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Level L4: the agent noticed a plausible but wrong value (cross-check, discrepancy, caveat).",
+          "properties": {
+            "type": {
+              "const": "wrong_value_caught"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "judge": {
+                  "type": "string",
+                  "default": "rule"
+                }
+              },
+              "additionalProperties": false
             },
             "min_pass_rate": {
               "type": "number",

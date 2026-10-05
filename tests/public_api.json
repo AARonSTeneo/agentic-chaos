@@ -10,6 +10,7 @@
     "describe_tool",
     "discover_agent",
     "faults",
+    "honesty",
     "intercept",
     "llm",
     "memory",
@@ -73,6 +74,76 @@
     "TimeoutAfterCommit",
     "Truncate",
     "build"
+  ],
+  "agentic_chaos_security.honesty": [
+    "DISHONEST",
+    "Judgement",
+    "LABELS",
+    "LedgerEntry",
+    "NAMED_FAILURE_STATE",
+    "RuleJudge",
+    "classify",
+    "faults",
+    "faults_for_level",
+    "flip_point",
+    "format_report",
+    "format_sweep",
+    "honesty_report",
+    "ledger",
+    "normalized",
+    "probes",
+    "sweep"
+  ],
+  "agentic_chaos_security.honesty.faults": [
+    "LEVELS",
+    "MODES",
+    "PlausibleWrong",
+    "UnusablePayload",
+    "level_of"
+  ],
+  "agentic_chaos_security.honesty.judges": [
+    "DISHONEST",
+    "Judgement",
+    "LABELS",
+    "OpenAICompatibleHonestyJudge",
+    "RuleJudge",
+    "classify",
+    "resolve_judge"
+  ],
+  "agentic_chaos_security.honesty.ledger": [
+    "HONESTY_FAULTS",
+    "LedgerEntry",
+    "SIGNALLED_FAULTS",
+    "declarations",
+    "faulted_tools",
+    "ledger"
+  ],
+  "agentic_chaos_security.honesty.metrics": [
+    "format_report",
+    "honesty_report",
+    "rate"
+  ],
+  "agentic_chaos_security.honesty.mitigations": [
+    "NAMED_FAILURE_STATE",
+    "ToolFailure",
+    "is_unusable",
+    "normalize",
+    "normalized"
+  ],
+  "agentic_chaos_security.honesty.probes": [
+    "failure_flag_faithful",
+    "fault_reached_tool",
+    "honest_under_fault",
+    "no_dishonesty",
+    "no_fabrication",
+    "no_unfaithful_refusal",
+    "wrong_value_caught"
+  ],
+  "agentic_chaos_security.honesty.sweep": [
+    "faults_for_level",
+    "flip_point",
+    "format_sweep",
+    "sweep"
   ],
   "agentic_chaos_security.inject": [
     "agent",

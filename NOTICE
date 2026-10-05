@@ -1,0 +1,16 @@
+Agentic Chaos — fork with the honesty-under-fault extension
+
+This product is a fork of Agentic Chaos (https://github.com/RicoKomenda/agentic-chaos),
+Copyright the Agentic Chaos contributors, licensed under the Apache License, Version 2.0.
+
+Modifications in this fork (see CHANGELOG.md, "Fork: honesty under fault"):
+- Added the agentic_chaos_security.honesty package (faults, ledger, judges, probes, metrics,
+  sweeps, mitigations)
+- Added examples/honesty_lab and experiments/honesty
+- Added --honesty, --judge and --honesty-report to the run command
+- Registered the honesty package in the top-level package; regenerated the JSON Schema and the
+  public API snapshot
+
+Fork maintainer: Aaron Rinehart.
+The label set for honesty judgements follows Sethi et al., "Fabrication After Tool Failure"
+(arXiv 2609.14758).

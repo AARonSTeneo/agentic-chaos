@@ -36,6 +36,11 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--html", type=Path, help="write a self-contained HTML report")
     run.add_argument("--markdown", type=Path, help="write a Markdown summary (e.g. $GITHUB_STEP_SUMMARY)")
     run.add_argument("--otel", action="store_true", help="export results as OpenTelemetry spans (needs the otel extra)")
+    run.add_argument(
+        "--honesty", action="store_true", help="also print an honesty report (dishonest rate, with intervals)"
+    )
+    run.add_argument("--judge", default="rule", help="honesty judge: rule, openai:<model>, or module:factory")
+    run.add_argument("--honesty-report", type=Path, help="write the honesty reports as JSON to this path")
 
     proxy = sub.add_parser(
         "mcp-proxy",
@@ -99,6 +104,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     results = []
+    honesty_reports: list[dict[str, Any]] = []
     for path in loader.expand(args.files):
         try:
             experiment = loader.load(path, entrypoint=args.target, runs=args.runs)
@@ -107,6 +113,13 @@ def main(argv: list[str] | None = None) -> int:
         result = experiment.run()
         results.append(result)
         print(result.summary(), end="\n\n")
+        if args.honesty or args.honesty_report:
+            from agentic_chaos_security.honesty.metrics import format_report, honesty_report
+
+            honesty = honesty_report(result, judge=args.judge)
+            honesty_reports.append(honesty)
+            if args.honesty:
+                print(format_report(honesty), end="\n\n")
 
     redactor: Redactor | bool = False if args.no_redact else Redactor(extra_patterns=args.redact_pattern)
     outputs = {args.junit: report.to_junit, args.html: report.to_html, args.markdown: report.to_markdown}
@@ -125,6 +138,10 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps([r.to_dict(args.traces, redactor=redactor) for r in results], indent=2), encoding="utf-8"
         )
         print(f"report written to {args.report}")
+
+    if args.honesty_report:
+        args.honesty_report.write_text(json.dumps(honesty_reports, indent=2, default=str), encoding="utf-8")
+        print(f"honesty report written to {args.honesty_report}")
 
     weaknesses = sum(r.verdict is Verdict.WEAKNESS for r in results)
     inconclusive = sum(r.verdict is Verdict.INCONCLUSIVE for r in results)

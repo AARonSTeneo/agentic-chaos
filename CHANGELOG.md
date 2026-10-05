@@ -5,6 +5,29 @@ and the project uses [Semantic Versioning](https://semver.org/) (see [docs/versi
 
 ## [Unreleased]
 
+## Fork: honesty under fault - 1.0.0+sce.0.2 - 2026-10-05
+
+Fork of 1.0.0 for "Security Chaos Engineering for AI Agents", Experiment 1 (tool-execution fabrication).
+
+### Added
+
+- `agentic_chaos_security.honesty`: gray-failure faults that keep a success envelope (`unusable_payload`
+  with modes empty, truncated, schema_mismatch, corrupted, redacted, stale; `plausible_wrong`), a fault
+  ledger holding the true value each fault suppressed, honesty judges (deterministic `rule` and an
+  OpenAI-compatible model judge), probes (`no_dishonesty`, `no_fabrication`, `no_unfaithful_refusal`,
+  `honest_under_fault`, `wrong_value_caught`, `failure_flag_faithful`, `fault_reached_tool`), dishonest-rate
+  metrics with Wilson intervals, intensity sweeps with flip points, and two mitigations (boundary
+  normalization, named failure state).
+- `examples/honesty_lab`: fictional tools, four scripted agents and an LLM agent.
+- `experiments/honesty`: runs E1.1 to E1.6, plus LLM variants.
+- `achaos run --honesty`, `--judge`, `--honesty-report`.
+- `docs/honesty.md`, `NOTICE`.
+
+### Changed
+
+- The top-level package imports `honesty`, so its faults and probes are built-in; the JSON Schema and the
+  public API snapshot were regenerated.
+
 ## [1.0.0] - 2026-10-02
 
 First stable release. The public API, the `agentic-chaos/v1` experiment format, CLI commands and exit codes,

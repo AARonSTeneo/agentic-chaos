@@ -38,6 +38,7 @@ nav:
       - Recipes: recipes.md
       - Protocol layers (MCP, A2A, AP2): protocols.md
       - Integrations: integrations.md
+      - "Honesty under fault (fork)": honesty.md
   - Reference:
       - Fault catalog: fault-catalog.md
       - Public API: api.md

@@ -19,6 +19,15 @@ that your security and resilience invariants still hold.
 > follow the [versioning policy](docs/versioning.md). Installs as `agentic-chaos-security`
 > (`import agentic_chaos_security`, command `agentic-chaos-security` or `achaos`).
 
+> **Fork: honesty under fault.** This fork adds `agentic_chaos_security.honesty`, which measures whether an
+> agent tells the truth when its tools fail quietly (status ok, unusable value). It adds gray-failure faults,
+> a fault ledger, honesty judges, dishonest-rate metrics with confidence intervals, flip-point sweeps, a lab
+> and runs E1.1 to E1.6. See [docs/honesty.md](docs/honesty.md) and [NOTICE](NOTICE).
+>
+> ```bash
+> PYTHONPATH=. achaos run experiments/honesty --honesty
+> ```
+
 ## Why another chaos tool?
 
 | Approach | Question it answers |

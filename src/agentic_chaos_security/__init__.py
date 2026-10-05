@@ -2,7 +2,12 @@
 
 from importlib import metadata as _metadata
 
-from agentic_chaos_security import ap2, faults, probes
+from agentic_chaos_security import (
+    ap2,
+    faults,
+    honesty,  # noqa: E402  (fork: registers honesty faults and probes)
+    probes,
+)
 from agentic_chaos_security.experiment import Experiment, ExperimentResult, ProbeStats, Verdict
 from agentic_chaos_security.inject import (
     agent,
@@ -33,6 +38,7 @@ __all__ = [
     "describe_tool",
     "discover_agent",
     "faults",
+    "honesty",
     "intercept",
     "llm",
     "memory",
