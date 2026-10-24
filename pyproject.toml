@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agentic-chaos-security"
-version = "1.0.0+sce.0.2.1"
+version = "1.0.0+sce.0.3"
 description = "Security chaos engineering for AI agents and LLM applications."
 readme = "README.md"
 license = "Apache-2.0"

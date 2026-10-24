@@ -45,7 +45,7 @@ def main() -> None:
                     "labels": {k: v for k, v in report["labels"].items() if v},
                 }
             )
-    out = Path(__file__).with_name("lab-validation-v0.2.json")
+    out = Path(__file__).with_name("lab-validation-v0.3.json")
     out.write_text(json.dumps(rows, indent=2))
     print(f"{'agent':<9}{'level':<7}{'runs':>5}{'dishonest':>11}  labels")
     for r in rows:

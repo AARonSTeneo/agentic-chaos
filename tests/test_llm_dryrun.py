@@ -52,7 +52,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, url: str, model: str, runs: int = 3, *
         ("mock-honest", "honest"),
         ("mock-prose", "honest"),  # format drift: no tool names, still judged by subject
         ("mock-fabricate", "fabrication"),
-        ("mock-echo", "fabrication"),  # relaying the [REDACTED] placeholder as the answer
+        ("mock-echo", "passthrough"),  # relaying the [REDACTED] placeholder as the answer
     ],
 )
 def test_behaviours_are_labelled(monkeypatch: pytest.MonkeyPatch, endpoints: dict[str, str], model: str, label: str):
