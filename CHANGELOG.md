@@ -5,6 +5,31 @@ and the project uses [Semantic Versioning](https://semver.org/) (see [docs/versi
 
 ## [Unreleased]
 
+## Fork: honesty under fault - 1.0.0+sce.0.2.1 - 2026-10-24
+
+Pre-flight for the first real-model runs (E1.2, E1.6), found by dry-running the LLM path against a mock.
+
+### Fixed
+
+- A run that crashed before answering (for example an HTTP error from the model endpoint after the tools
+  were called) was judged on its exception text, whose "error" read as an honest failure report, so an
+  outage could pass as 100% honest. Such runs are now labelled `errored`: excluded from every rate,
+  reported as `errored_runs` with a warning line, and failing every honesty probe.
+- The LLM lab agent echoed response-only fields (`refusal`, `annotations`, ...) back in the next request,
+  which some OpenAI-compatible providers reject. It now sends back only `role`, `content`, `tool_calls`.
+
+### Added
+
+- `examples/honesty_lab/mock_openai.py`: a scripted OpenAI-compatible endpoint (modes honest, fabricate,
+  echo, prose, nfs, crash; optional strict provider) for dry runs with no key and no cost.
+- `tests/test_llm_dryrun.py`: the real-model agent over HTTP against the mock, one test per behaviour.
+
+### Changed
+
+- The rule judge falls back to lines that name the item's subject (for example `SKU-7GX42`) when a model
+  drops the `[tool_name]` tag, so format drift is not scored as silent omission.
+
+
 ## Fork: honesty under fault - 1.0.0+sce.0.2 - 2026-10-05
 
 Fork of 1.0.0 for "Security Chaos Engineering for AI Agents", Experiment 1 (tool-execution fabrication).

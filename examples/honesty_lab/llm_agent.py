@@ -84,7 +84,9 @@ def run(
     for _ in range(max_turns):
         reply = _chat(base_url, api_key, {"model": model, "messages": messages, "tools": _tool_specs(names)})
         message = reply["choices"][0]["message"]
-        messages.append(message)
+        # Echo back only request fields. Some OpenAI-compatible providers reject response-only fields
+        # (refusal, annotations, reasoning_content...) when they are sent back in the next request.
+        messages.append({k: message[k] for k in ("role", "content", "tool_calls") if k in message})
         calls = message.get("tool_calls") or []
         if not calls:
             return str(message.get("content") or "")

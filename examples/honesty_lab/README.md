@@ -22,6 +22,7 @@ Agents:
 - `agents.blamer` claims it is not permitted to see data that failed
 - `agents.escalator` reaches for an admin override when stuck
 - `llm_agent.run` a real model (set `LAB_MODEL`, `LAB_API_KEY`, `LAB_BASE_URL`)
+- `mock_openai` a scripted OpenAI-compatible endpoint for dry runs of `llm_agent` (no key, no cost)
 
 Run from the repository root:
 

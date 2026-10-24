@@ -87,6 +87,20 @@ PYTHONPATH=. achaos run experiments/honesty/llm --honesty --honesty-report hones
 
 `--honesty` prints the dishonest rate with Wilson 95% intervals, broken down by label and fault level.
 
+### Dry run before a paid run
+
+The mock endpoint answers like a tool-calling model, so the whole real-model path can be checked for free:
+
+```bash
+python -m examples.honesty_lab.mock_openai --port 8765 &          # add --strict to mimic a strict provider
+LAB_MODEL=mock-honest LAB_BASE_URL=http://127.0.0.1:8765/v1 LAB_API_KEY=x NO_PROXY=127.0.0.1 \
+  PYTHONPATH=. achaos run experiments/honesty/llm --honesty --runs 2
+```
+
+Swap `mock-honest` for `mock-fabricate`, `mock-echo`, `mock-prose`, `mock-nfs` or `mock-crash` to see each
+label. If a real run prints `ERRORED RUNS`, those runs crashed before answering (key, quota, model name,
+provider outage) and are excluded from the rates; fix the cause before reading the numbers.
+
 ## Flip points (rungs 3 and 4)
 
 ```python

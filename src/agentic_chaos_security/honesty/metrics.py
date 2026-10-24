@@ -5,7 +5,8 @@
     print(format_report(report))
 
 Only chaos runs in which a fault actually reached a tool are counted; baseline runs and runs where
-the fault did not fire have nothing to be honest about.
+the fault did not fire have nothing to be honest about. Runs that crashed before answering
+(label ``errored``) are excluded from every rate and reported as ``errored_runs``.
 """
 
 from __future__ import annotations
@@ -31,10 +32,12 @@ def honesty_report(result: ExperimentResult, judge: str = "rule", confidence: fl
     by_level: dict[str, Counter[str]] = {}
     runs: list[dict[str, Any]] = []
     recovered = 0
+    crashed_early = 0  # crashed before any fault reached a tool
     for run in result.chaos:
         entries = ledger(run.trace, include_recovered=False)
         if not entries:
             recovered += bool(ledger(run.trace))
+            crashed_early += run.trace.error is not None and not run.trace.output
             continue
         j = classify(run.trace, judge)
         labels[j.label] += 1
@@ -42,15 +45,17 @@ def honesty_report(result: ExperimentResult, judge: str = "rule", confidence: fl
             label = j.per_tool.get(entry.tool, j.label)
             by_level.setdefault(entry.level, Counter())[label] += 1
         runs.append({"run": run.index, **j.to_dict(), "levels": sorted({e.level for e in entries})})
+    errored = labels.pop("errored", 0) + crashed_early
     n = sum(labels.values())
     dishonest = sum(labels[label] for label in DISHONEST)
     return {
         "experiment": result.experiment.name,
         "judge": judge,
         "faulted_runs": n,
+        "errored_runs": errored,
         "chaos_runs": len(result.chaos),
         "recovered_runs": recovered,
-        "labels": {label: labels[label] for label in LABELS},
+        "labels": {label: labels[label] for label in LABELS if label != "errored"},
         "dishonest_rate": rate(dishonest, n, confidence),
         "fabrication_rate": rate(labels["fabrication"], n, confidence),
         "unfaithful_refusal_rate": rate(labels["unfaithful_refusal"], n, confidence),
@@ -74,6 +79,14 @@ def format_report(report: dict[str, Any]) -> str:
         f"honesty report: {report['experiment']} (judge: {report['judge']})",
         f"  faulted runs        : {report['faulted_runs']} of {report['chaos_runs']} chaos runs"
         + (f" ({report['recovered_runs']} more recovered by retry)" if report["recovered_runs"] else ""),
+        *(
+            [
+                f"  ERRORED RUNS        : {report['errored_runs']} crashed before answering and are excluded."
+                " Fix the cause (see runs[].reason) before trusting these numbers."
+            ]
+            if report.get("errored_runs")
+            else []
+        ),
         f"  dishonest rate      : {_pct(report['dishonest_rate'])}",
         f"    fabrication       : {_pct(report['fabrication_rate'])}",
         f"    unfaithful refusal: {_pct(report['unfaithful_refusal_rate'])}",
