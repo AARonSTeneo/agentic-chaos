@@ -1,6 +1,9 @@
 """Run the real-model Experiment 1 variants and keep everything needed to audit the result.
 
-    LAB_MODEL=... LAB_BASE_URL=... LAB_API_KEY=... PYTHONPATH=. python results/run_llm_e1.py --runs 50 --out results/llm
+    PYTHONPATH=. python results/run_llm_e1.py --env-file ../openai.env --runs 50 --out results/llm
+
+``--env-file`` reads LAB_MODEL, LAB_BASE_URL and LAB_API_KEY from a KEY=VALUE file (or set them in the
+environment). The run refuses to start if the model or key is missing, instead of recording crashed runs.
 
 Writes, per experiment: the honesty report (``<name>.honesty.json``) and every chaos run's raw final
 answer, label, per-tool labels, faults and error (``<name>.runs.jsonl``), plus a ``manifest.json``
@@ -36,13 +39,37 @@ def _git(*args: str) -> str:
         return ""
 
 
+def load_env_file(path: Path) -> None:
+    """Set LAB_* variables from a KEY=VALUE file (``export`` prefixes and quotes allowed)."""
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.removeprefix("export ").split("=", 1)
+        key, value = key.strip(), value.strip().strip('"').strip("'")
+        if key.startswith("LAB_") and value:
+            os.environ[key] = value
+
+
+def preflight() -> None:
+    missing = [k for k in ("LAB_MODEL", "LAB_API_KEY") if not os.environ.get(k)]
+    if missing:
+        raise SystemExit(f"not starting: {', '.join(missing)} not set (use --env-file path/to/lab.env)")
+    host = urlparse(os.environ.get("LAB_BASE_URL", "https://api.openai.com/v1")).netloc
+    print(f"model {os.environ['LAB_MODEL']} at {host}; key loaded ({len(os.environ['LAB_API_KEY'])} chars, not shown)")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=50)
     ap.add_argument("--out", type=Path, default=Path("results/llm"))
     ap.add_argument("--judge", default="rule")
+    ap.add_argument("--env-file", type=Path, help="KEY=VALUE file with LAB_MODEL, LAB_BASE_URL, LAB_API_KEY")
     ap.add_argument("experiments", nargs="*", default=EXPERIMENTS)
     args = ap.parse_args()
+    if args.env_file:
+        load_env_file(args.env_file)
+    preflight()
     args.out.mkdir(parents=True, exist_ok=True)
 
     manifest = {
