@@ -29,3 +29,12 @@ Run from the repository root:
 ```bash
 PYTHONPATH=. achaos run experiments/honesty --honesty
 ```
+
+Real-model runs (keep the raw answers and a manifest; see `results/llm/`):
+
+```bash
+PYTHONPATH=. python results/run_llm_e1.py --env-file path/to/lab.env --runs 50 --out results/llm/<dir>
+results/run_e1_6b.sh path/to/lab.env          # E1.6b tool wrapper: mock dry run first, then the paid run
+PYTHONPATH=. python results/label_sheet.py make results/llm/*-boundary --out results/llm/labels-v0.4
+PYTHONPATH=. python results/label_sheet.py score results/llm/labels-v0.4
+```
