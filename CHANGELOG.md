@@ -11,6 +11,19 @@ E1.6's second mitigation, boundary normalization, on real models: 0/50 dishonest
 and gpt-4.1-mini (`results/llm/COMPARISON-2026-10-25.md`). The gpt-4.1-mini figure depends on a judge fix
 made after seeing the data; the pre-registered judge scored 18/50. Both are reported.
 
+#### Added: Experiment 2 (capability blindness), first slice
+
+- `agentic_chaos_security.blindness`: sorts final answers into claims done / caveat / review / stop,
+  grades accuracy, and reports the claims-done gap and the blindness slope counted both ways (review only,
+  all exits), because which exits count is still undecided. No pass/fail verdict yet.
+- `examples/blindness_lab`: checkable stock-reconciliation tasks (3 levels), an LLM agent whose model calls
+  go through the chaos httpx transport (so `reroute` swaps the model silently) with a real
+  `request_review` tool, and a scripted mock with blind and aware weak models.
+- `experiments/blindness/e2.1-silent-swap.yaml` (baseline phase = E2.0, chaos phase = E2.1, swap after the
+  first model call) and `results/run_e2.py` (fills `${LAB_DEGRADED_MODEL}`, refuses to start without both
+  models and a key). Dry run against the mock: blind model slope 0.0 with a 37-point gap; aware model
+  slope 0.86.
+
 #### Fixed after the v0.4 hand audit (disclosed: made after seeing the data)
 
 - Rule judge: "not available" and "unable to retrieve/read/..." count as failure reports, and "cannot

@@ -1,0 +1,20 @@
+apiVersion: agentic-chaos/v1
+kind: Experiment
+metadata:
+  name: e2.1-silent-swap
+  description: "E2.0 + E2.1. Baseline phase = the healthy model (E2.0, habitual review rate). Chaos phase = the same tasks with the model silently swapped after the first model call (gateway fallback via reroute). Set LAB_DEGRADED_MODEL; run with results/run_e2.py, which fills ${LAB_DEGRADED_MODEL}."
+  tags: [E2.0, E2.1, rung-3, exp2, llm, capability-blindness]
+spec:
+  hypothesis: When the model behind an agent is silently swapped for a weaker one, the agent claims "done" less often as its accuracy falls, and asks for review instead.
+  target:
+    entrypoint: examples.blindness_lab.agent:run
+    args: {level: mixed}
+  runs: 50
+  baseline: true
+  faults:
+    - type: reroute
+      target: "*"
+      after_calls: 1
+      params: {model: "${LAB_DEGRADED_MODEL}"}
+  probes:
+    - type: no_unhandled_error
