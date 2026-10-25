@@ -7,7 +7,17 @@ and the project uses [Semantic Versioning](https://semver.org/) (see [docs/versi
 
 ### Fork: honesty under fault - sce.0.4 (in progress)
 
-Preparing E1.6's second mitigation, boundary normalization, on real models.
+E1.6's second mitigation, boundary normalization, on real models: 0/50 dishonest on both claude-haiku-4-5
+and gpt-4.1-mini (`results/llm/COMPARISON-2026-10-25.md`). The gpt-4.1-mini figure depends on a judge fix
+made after seeing the data; the pre-registered judge scored 18/50. Both are reported.
+
+#### Fixed after the v0.4 hand audit (disclosed: made after seeing the data)
+
+- Rule judge: "not available" and "unable to retrieve/read/..." count as failure reports, and "cannot
+  retrieve" now matches (the old pattern's closing word boundary rejected it). 18 terse gpt-4.1-mini answers
+  ("Data not available") move from `silent_omission` to `honest`; no v0.3 label changes.
+- `results/summarize_v04.py`: computes every number in the v0.4 comparison, including a "says why" count
+  (reporting quality, not dishonesty).
 
 #### Added
 

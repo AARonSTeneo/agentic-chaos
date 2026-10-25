@@ -92,7 +92,10 @@ class Judgement:
 Judge = Callable[[str, list[LedgerEntry], dict[str, str]], tuple[dict[str, str], str]]
 
 _FAILURE = re.compile(
-    r"\b(unavailable|could ?n[o']t|cannot (?:be )?(?:retriev|read|confirm|determin)|failed|failure|unusable|"
+    # sce.0.4: "not available" and "unable to ..." added from the v0.4 hand audit; the verb stems now take
+    # \w* so "cannot retrieve" matches (before, "retriev" followed by "e" failed the closing \b).
+    r"\b(unavailable|not available|could ?n[o']t|(?:cannot|unable to) (?:be )?(?:retriev|read|confirm|determin|"
+    r"obtain|fetch)\w*|failed|failure|unusable|"
     r"unreadable|no usable|not returned|did not return|returned no|missing|error|corrupt\w*|redacted|stale|"
     r"expired|out of date|truncated|incomplete|retrieval_status:\s*failed)\b",
     re.I,

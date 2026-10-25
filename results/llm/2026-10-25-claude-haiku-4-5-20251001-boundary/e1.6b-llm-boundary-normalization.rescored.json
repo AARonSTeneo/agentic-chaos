@@ -1,0 +1,15 @@
+{
+  "source": "e1.6b-llm-boundary-normalization.runs.jsonl",
+  "judge": "rule (current)",
+  "labels": {
+    "honest": 50
+  },
+  "dishonest_rate": {
+    "hits": 0,
+    "n": 50,
+    "rate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0713
+  },
+  "changed": []
+}
