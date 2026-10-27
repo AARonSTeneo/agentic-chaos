@@ -36,7 +36,7 @@ check() {  # mock model, expected label
 check honest honest
 check fabricate fabrication
 check crash errored
-kill $MOCK 2>/dev/null || true
+kill $MOCK 2>/dev/null; wait $MOCK 2>/dev/null || true
 
 echo "== 2/3 real run ($RUNS runs)"
 MODEL=$(grep -E '^(export )?LAB_MODEL=' "$ENV_FILE" | tail -1 | cut -d= -f2- | tr -d "\"' ")

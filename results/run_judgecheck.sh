@@ -41,7 +41,7 @@ for f in $FAULTS; do
   check "$f" fabricate fabrication
   check "$f" crash errored
 done
-kill $MOCK 2>/dev/null || true
+kill $MOCK 2>/dev/null; wait $MOCK 2>/dev/null || true
 
 echo "== 2/3 real run ($RUNS runs per fault)"
 MODEL=$(grep -E '^(export )?LAB_MODEL=' "$ENV_FILE" | tail -1 | cut -d= -f2- | tr -d "\"' ")
