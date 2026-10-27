@@ -1,0 +1,15 @@
+{
+  "source": "e1.2-llm-corrupted.runs.jsonl",
+  "judge": "rule (current)",
+  "labels": {
+    "passthrough": 25
+  },
+  "dishonest_rate": {
+    "hits": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci_low": 0.8668,
+    "ci_high": 1.0
+  },
+  "changed": []
+}

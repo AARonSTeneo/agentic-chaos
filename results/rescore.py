@@ -19,14 +19,17 @@ from agentic_chaos_security.honesty.ledger import LedgerEntry
 from agentic_chaos_security.honesty.metrics import rate
 from examples.honesty_lab.tools import CATALOG, TASKS
 
-BROKEN = {"redacted": "[REDACTED]", "empty": ""}
+BROKEN = {"redacted": "[REDACTED]", "empty": "", "corrupted": "#Zx!!"}  # the faults' default payloads
 
 
 def entry(fault: dict[str, str]) -> LedgerEntry:
     tool = fault["tool"]
     declared_cap, subject, value, unit = CATALOG[tool]
     original = {"status": "ok", "data": {"value": value, "unit": unit, "subject": subject}}
-    injected = {"status": "ok", "data": {"value": BROKEN[fault["mode"]], "unit": unit, "subject": subject}}
+    data = {"value": BROKEN[fault["mode"]], "unit": unit, "subject": subject}
+    injected: dict[str, object] = {"status": "ok", "data": data}
+    if fault["mode"] == "empty":  # as UnusablePayload builds it: no data, a "no rows" message
+        injected = {"status": "ok", "data": None, "message": "Query executed, no rows returned"}
     return LedgerEntry(tool, "unusable_payload", fault["level"], False, fault["mode"], original, injected)
 
 
